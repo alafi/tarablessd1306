@@ -59,6 +59,25 @@ bool SSD1306_I2CMasterInitDefault( void ) {
 }
 
 /*
+ * De-initializes the i2c master with the port number specified
+ * in the component configuration in sdkconfig.h.
+ * 
+ * Returns true on successful delete of the i2c driver.
+ */
+bool SSD1306_I2CMasterDelete( struct SSD1306_Device* DisplayHandle ) {
+    NullCheck( DisplayHandle, return false );
+
+    bool result = SSD1306_Delete_I2C( DisplayHandle );
+
+    if ( DisplayHandle->RSTPin >= 0 ) {
+        ESP_ERROR_CHECK_NONFATAL( gpio_set_level( DisplayHandle->RSTPin, 0 ), return false );
+    }
+    ESP_ERROR_CHECK_NONFATAL( i2c_driver_delete( I2CPortNumber), return false );
+
+    return result;
+}
+
+/*
  * Attaches a display to the I2C bus using default communication functions.
  * 
  * Params:

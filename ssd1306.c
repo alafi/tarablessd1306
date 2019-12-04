@@ -235,6 +235,12 @@ static bool SSD1306_Init( struct SSD1306_Device* DeviceHandle, int Width, int He
     return true;
 }
 
+static bool SSD1306_Delete( struct SSD1306_Device* DeviceHandle ){
+    SSD1306_DisplayOff( DeviceHandle );
+    heap_caps_free(DeviceHandle->Framebuffer);
+    return true;
+}
+
 bool SSD1306_Init_I2C( struct SSD1306_Device* DeviceHandle, int Width, int Height, int I2CAddress, int ResetPin, WriteCommandProc WriteCommand, WriteDataProc WriteData, ResetProc Reset ) {
     NullCheck( DeviceHandle, return false );
     NullCheck( WriteCommand, return false );
@@ -249,6 +255,12 @@ bool SSD1306_Init_I2C( struct SSD1306_Device* DeviceHandle, int Width, int Heigh
     DeviceHandle->RSTPin = ResetPin;
     
     return SSD1306_Init( DeviceHandle, Width, Height );
+}
+
+bool SSD1306_Delete_I2C( struct SSD1306_Device* DeviceHandle ) {
+    NullCheck( DeviceHandle, return false );
+
+    return SSD1306_Delete( DeviceHandle );
 }
 
 bool SSD1306_Init_SPI( struct SSD1306_Device* DeviceHandle, int Width, int Height, int ResetPin, int CSPin, spi_device_handle_t SPIHandle, WriteCommandProc WriteCommand, WriteDataProc WriteData, ResetProc Reset ) {
